@@ -4,9 +4,15 @@ SSID="YourNetworkName"
 PASSWORD="YourPassword"
 DNS="UPatrasDNS"
 
+red=`tput setaf 1`
+green=`tput setaf 2`
+reset=`tput sgr0`
+
+
 apt-get update
 apt-get -y upgrade
 
+echo "${red}HOSTAPD${reset}"
 # Install access point software
 apt-get -y install hostapd
 
@@ -14,14 +20,16 @@ apt-get -y install hostapd
 systemctl unmask hostap
 systemctl enable hostapd
 
+echo "${red}DNSMASQ${reset}"
 # Install dnsmasq to provide network management services (DNS, DHCP) 
-apt install dnsmasq
+apt-get -y install dnsmasq
 
 # Add UPatras nameserver
 echo "
 server=$DNS
 " >> /etc/dnsmasq.conf
 
+echo "${red}NETFILTER${reset}"
 # install netfilter-persistent and iptables-persistent to save firewall rules 
 DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
 
@@ -38,9 +46,11 @@ echo "# https://www.raspberrypi.org/documentation/configuration/wireless/access-
 net.ipv4.ip_forward=1
 " >> /etc/sysctl.d/routed-ap.conf
 
+echo "${red}MASQUERADE${reset}"
 # Masquerade traffic from/to wireless clients as Pi
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
+echo "${red}NETFILTER PERSISTENT SAVE${reset}"
 # Persist changes to be loaded at boot
 netfilter-persistent save
 
@@ -54,6 +64,7 @@ address=/gw.wlan/192.168.4.1
                 # Alias for this router
 " >> /etc/dnsmasq.conf
 
+echo "${red}UNBLOCK${reset}"
 # Ensure wireless operation
 rfkill unblock wlan
 
@@ -73,6 +84,6 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 " >> /etc/hostapd/hostapd.conf
 
-
+echo "${red}REBOOT${reset}"
 reboot
 
