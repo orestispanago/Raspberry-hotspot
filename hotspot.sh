@@ -4,8 +4,11 @@ SSID="YourNetworkName"
 PASSWORD="YourPassword"
 DNS="UPatrasDNS"
 
+apt-get update
+apt-get -y upgrade
+
 # Install access point software
-apt install hostapd
+apt-get -y install hostapd
 
 # Enable access point service ans start at boot
 systemctl unmask hostap
@@ -13,6 +16,11 @@ systemctl enable hostapd
 
 # Install dnsmasq to provide network management services (DNS, DHCP) 
 apt install dnsmasq
+
+# Add UPatras nameserver
+echo "
+server=$DNS
+" >> /etc/dnsmasq.conf
 
 # install netfilter-persistent and iptables-persistent to save firewall rules 
 DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
@@ -35,11 +43,6 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 # Persist changes to be loaded at boot
 netfilter-persistent save
-
-# Add UPatras nameserver
-echo "
-server=$DNS
-" >> /etc/dnsmasq.conf
 
 # Configure DHCP and DNS services for the wireless network
 echo "
