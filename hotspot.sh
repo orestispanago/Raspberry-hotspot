@@ -11,17 +11,24 @@ reset=`tput sgr0`
 
 apt-get update
 apt-get -y upgrade
+# apt-get update
+# apt-get -y upgrade
 
 echo "${red}HOSTAPD${reset}"
 # Install access point software
 apt-get -y install hostapd
 
-# Enable access point service ans start at boot
+# Enable access point service and start at boot
 systemctl unmask hostap
 systemctl enable hostapd
 
+echo "${red}NETFILTER${reset}"
+# install netfilter-persistent and iptables-persistent to save firewall rules
+DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
+
+
 echo "${red}DNSMASQ${reset}"
-# Install dnsmasq to provide network management services (DNS, DHCP) 
+# Install dnsmasq to provide network management services (DNS, DHCP)
 apt-get -y install dnsmasq
 
 # Add UPatras nameserver
@@ -29,9 +36,6 @@ echo "
 server=$DNS
 " >> /etc/dnsmasq.conf
 
-echo "${red}NETFILTER${reset}"
-# install netfilter-persistent and iptables-persistent to save firewall rules 
-DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
 
 # Assign first IP address of the wireless network to the Pi, to act as router
 echo "
@@ -86,4 +90,3 @@ rsn_pairwise=CCMP
 
 echo "${red}REBOOT${reset}"
 reboot
-
