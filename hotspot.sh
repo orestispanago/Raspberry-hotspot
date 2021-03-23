@@ -1,11 +1,11 @@
 #!/bin/bash
 
-SSID="pi1"
+SSID="lapup_iot"
 PASSWORD="treloskodikos"
 DNS="150.140.129.30"
 
-# apt-get update
-# apt-get -y upgrade
+apt-get update
+apt-get -y upgrade
 
 # Install access point software
 apt-get -y install hostapd
@@ -15,7 +15,7 @@ systemctl unmask hostapd
 systemctl enable hostapd
 
 # install netfilter-persistent and iptables-persistent to save firewall rules
-DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
+DEBIAN_FRONTEND=noninteractive apt-get install -y netfilter-persistent iptables-persistent
 
 # Install dnsmasq to provide network management services (DNS, DHCP)
 apt-get -y install dnsmasq
