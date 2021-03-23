@@ -1,33 +1,22 @@
 #!/bin/bash
 
-SSID="YourNetworkName"
-PASSWORD="YourPassword"
-DNS="UPatrasDNS"
+SSID="pi1"
+PASSWORD="treloskodikos"
+DNS="150.140.129.30"
 
-red=`tput setaf 1`
-green=`tput setaf 2`
-reset=`tput sgr0`
-
-
-apt-get update
-apt-get -y upgrade
 # apt-get update
 # apt-get -y upgrade
 
-echo "${red}HOSTAPD${reset}"
 # Install access point software
 apt-get -y install hostapd
 
 # Enable access point service and start at boot
-systemctl unmask hostap
+systemctl unmask hostapd
 systemctl enable hostapd
 
-echo "${red}NETFILTER${reset}"
 # install netfilter-persistent and iptables-persistent to save firewall rules
 DEBIAN_FRONTEND=noninteractive apt install -y netfilter-persistent iptables-persistent
 
-
-echo "${red}DNSMASQ${reset}"
 # Install dnsmasq to provide network management services (DNS, DHCP)
 apt-get -y install dnsmasq
 
@@ -35,7 +24,6 @@ apt-get -y install dnsmasq
 echo "
 server=$DNS
 " >> /etc/dnsmasq.conf
-
 
 # Assign first IP address of the wireless network to the Pi, to act as router
 echo "
@@ -50,11 +38,9 @@ echo "# https://www.raspberrypi.org/documentation/configuration/wireless/access-
 net.ipv4.ip_forward=1
 " >> /etc/sysctl.d/routed-ap.conf
 
-echo "${red}MASQUERADE${reset}"
 # Masquerade traffic from/to wireless clients as Pi
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
-echo "${red}NETFILTER PERSISTENT SAVE${reset}"
 # Persist changes to be loaded at boot
 netfilter-persistent save
 
@@ -67,10 +53,6 @@ domain=wlan     # Local wireless DNS domain
 address=/gw.wlan/192.168.4.1
                 # Alias for this router
 " >> /etc/dnsmasq.conf
-
-echo "${red}UNBLOCK${reset}"
-# Ensure wireless operation
-rfkill unblock wlan
 
 # Configure access point
 echo "country_code=GR
@@ -88,5 +70,7 @@ wpa_pairwise=TKIP
 rsn_pairwise=CCMP
 " >> /etc/hostapd/hostapd.conf
 
-echo "${red}REBOOT${reset}"
-reboot
+# Ensure wireless operation
+rfkill unblock wlan
+
+echo "Done... Please reboot your pi"
