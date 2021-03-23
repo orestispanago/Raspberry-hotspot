@@ -70,4 +70,9 @@ rsn_pairwise=CCMP
 # Ensure wireless operation
 rfkill unblock wlan
 
-echo "Done... Please reboot your pi"
+echo "Done...
+Ensure wireless operation after reboot using:
+
+rfkill unblock wlan
+
+And reboot your pi."
