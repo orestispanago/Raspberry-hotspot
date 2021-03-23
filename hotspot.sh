@@ -4,9 +4,6 @@ SSID="lapup_iot"
 PASSWORD="treloskodikos"
 DNS="150.140.129.30"
 
-apt-get update
-apt-get -y upgrade
-
 # Install access point software
 apt-get -y install hostapd
 
